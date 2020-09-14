@@ -1,0 +1,76 @@
+@page "/fetchdata"
+@using EmailTest2.Shared
+@inject HttpClient Http
+
+<h1>Gestao Mails</h1>
+
+<h3>
+    <button class="btn btn-primary" @onclick="OnInitializedAsync">
+        Atualizar
+    </button>
+</h3>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Assunto</th>
+                <th>De</th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                
+                    <ContextMenuTrigger WrapperTag="tr" MenuId="tblContextMenu" Data="forecast">
+                        <td>@forecast.Mail<span style="float:right;"><i class="oi oi-envelope-closed"></i></span></td>
+                        <td>@forecast.Assunto</td>
+                        <td>@forecast.De</td>
+                        <td>@forecast.Data</td>
+                    </ContextMenuTrigger>              
+            }
+        </tbody>
+    </table>
+
+    <ContextMenu Id="tblContextMenu">
+        <Item OnClick="@OnInitializedAsync"><i class="btn btn-info oi oi-action-redo"></i> Atualizar</Item>
+        <Item OnClick="@OnClick"><i class="btn btn-info oi oi-folder"></i> A processar</Item>
+        <Item OnClick="@OnClick"><i class="btn btn-info oi oi-folder"></i> Processados</Item>
+        <Item OnClick="@OnClick"><i class="btn btn-info oi oi-folder"></i> Eng Paulo</Item>
+        <Item OnClick="@OnClick"><i class="btn btn-info oi oi-folder"></i> Filipa</Item>
+        <Item OnClick="@OnDeleteClick"><i class="btn btn-danger oi oi-delete"></i> Delete</Item>
+    </ContextMenu>
+
+
+}
+
+@code {
+    private Email[] forecasts;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = await Http.GetFromJsonAsync<Email[]>("WeatherForecast");
+    }
+    void OnClick(ItemClickEventArgs e)
+    {
+        var mail = e.Data as Email;
+        List<Email> mailList = forecasts.ToList();
+        mailList.Add(mail);
+
+    }
+    void OnDeleteClick(ItemClickEventArgs e)
+    {
+        var currentRow = e.Data as Email;
+        List<Email> listremove = forecasts.ToList();
+        listremove.Remove(currentRow);
+        forecasts = listremove.ToArray();
+    }
+}

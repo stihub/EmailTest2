@@ -1,0 +1,87 @@
+﻿@inherits LayoutComponentBase
+@using EmailTest2.Client.Pages
+@inject IModalService Modal
+@using System.ComponentModel.DataAnnotations;
+
+<div class="sidebar">
+    <NavMenu />
+</div>
+
+<div class="main">
+    <div class="top-row px-4">
+        <a type="submit" class="oi oi-cog" @onclick="Login"></a>
+    </div>
+
+    @if (showModal)
+    {
+        <div class="modal" tabindex="-1" role="dialog" style="display:block" id="taskModal">
+            <div class="modal-dialog shadow-lg bg-white rounded" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Login</h5>
+                    </div>
+                    <div class="modal-body">
+                        <EditForm Model="user" OnValidSubmit="HandleValidSubmit">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+                            <div class="form-group row">
+                                <label class="col-3 col-form-label">Password: </label>
+                                <InputText type="password" class="col-8 form-control" @bind-Value="user.Password" />
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="button" class="btn btn-secondary" @onclick="CancelSubmit">Cancel</button>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="content px-4">
+        @Body
+    </div>
+</div>
+
+
+@code
+{
+    public class UserLogin
+    {
+
+        [Required(ErrorMessage = "Password is required")]
+        public string Password { get; set; }
+    }
+
+    UserLogin user = new UserLogin();
+
+    bool showModal;
+    string status;
+
+    protected override void OnInitialized()
+    {
+        showModal = false;
+        status = "Init";
+        user.Password = "";
+    }
+
+    private void Login()
+    {
+        status = "Show Login Modal";
+        showModal = true;
+    }
+
+    private void HandleValidSubmit()
+    {
+        status = "Valid Submit";
+
+        showModal = false;
+
+    }
+
+    private void CancelSubmit()
+    {
+        status = "Cancelled";
+        showModal = false;
+    }
+}

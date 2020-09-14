@@ -1,0 +1,61 @@
+﻿@page "/aprocessar"
+@using EmailTest2.Shared
+@using EmailTest2.Client.Pages
+@using BlazorContextMenu
+
+<h1>A processar</h1>
+
+<table class="table" method="GET">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Assunto</th>
+            <th>De</th>
+            <th>Data</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in GetData)
+        {
+
+            <ContextMenuTrigger WrapperTag="tr" MenuId="tblContextMenu" Data="item">
+        <td>@item.Mail<span style="float:right;"><i class="oi oi-envelope-closed"></i></span></td>
+        <td>@item.Assunto</td>
+        <td>@item.De</td>
+        <td>@item.Data</td>
+        </ContextMenuTrigger>
+
+    }
+        </tbody>
+    </table>
+
+    <ContextMenu Id="tblContextMenu">
+        <Item OnClick="@OnClick"><i class="btn btn-info oi oi-folder"></i> A processar</Item>
+        <Item OnClick="@OnClick"><i class="btn btn-info oi oi-folder"></i> Processados</Item>
+        <Item OnClick="@OnClick"><i class="btn btn-info oi oi-folder"></i> Eng Paulo</Item>
+        <Item OnClick="@OnClick"><i class="btn btn-info oi oi-folder"></i> Filipa</Item>
+        <Item OnClick="@OnDeleteClick"><i class="btn btn-danger oi oi-delete"></i> Delete</Item>
+    </ContextMenu>
+
+    @code{
+        [Parameter]
+        public List<Email> GetData { get; set; }
+
+        protected override void OnParametersSet()
+        {
+            //the param will be set
+            var emails = GetData;
+        }
+        void OnClick(ItemClickEventArgs e)
+        {
+            var mail = e.Data as Email;
+            List<Email> mailList = GetData.ToList();
+            mailList.Add(mail);
+
+        }
+        void OnDeleteClick(ItemClickEventArgs e)
+        {
+           
+        }
+    }
